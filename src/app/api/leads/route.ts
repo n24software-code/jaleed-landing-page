@@ -44,6 +44,20 @@ function rateLimited(key: string): boolean {
   return entry.count > MAX_PER_WINDOW;
 }
 
+/**
+ * Masks contact details so a lead can be logged for diagnosis without spilling
+ * personal data into the server log. Never handles the webhook token, which is
+ * kept out of every log line entirely.
+ */
+function redact(record: { phone: string; email: string; company: string }) {
+  const [user, domain] = record.email.split("@");
+  return {
+    phone: record.phone.length > 4 ? `***${record.phone.slice(-4)}` : "***",
+    email: domain ? `${user.slice(0, 2)}***@${domain}` : "***",
+    company: record.company,
+  };
+}
+
 function clientKey(request: Request): string {
   const forwarded = request.headers.get("x-forwarded-for");
   const ip = forwarded?.split(",")[0]?.trim() || request.headers.get("x-real-ip") || "unknown";
@@ -101,7 +115,22 @@ export async function POST(request: Request) {
     // No spreadsheet wired up yet. Keep the lead in the server log rather than
     // dropping it, and tell the visitor the submission failed so they retry or
     // use a direct channel.
-    console.error("[leads] GOOGLE_SHEETS_WEBHOOK_URL is not set. Lead not stored:", record);
+    console.error("[leads] GOOGLE_SHEETS_WEBHOOK_URL is not set. Lead not stored:", redact(record));
+    return NextResponse.json({ ok: false, error: "not_configured" }, { status: 503 });
+  }
+
+  // The Apps Script web app reads its shared secret from `e.parameter.token`.
+  // doPost() cannot see custom request headers at all, and it does not look in
+  // the JSON body — the token has to travel in the query string. It stays on
+  // the server: this request is made from the Node runtime, never the browser.
+  let endpoint: string;
+  try {
+    const url = new URL(webhookUrl);
+    const token = process.env.GOOGLE_SHEETS_WEBHOOK_TOKEN;
+    if (token) url.searchParams.set("token", token);
+    endpoint = url.toString();
+  } catch {
+    console.error("[leads] GOOGLE_SHEETS_WEBHOOK_URL is not a valid URL.", redact(record));
     return NextResponse.json({ ok: false, error: "not_configured" }, { status: 503 });
   }
 
@@ -109,30 +138,54 @@ export async function POST(request: Request) {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 10_000);
 
-    const response = await fetch(webhookUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...(process.env.GOOGLE_SHEETS_WEBHOOK_TOKEN
-          ? { "X-Webhook-Token": process.env.GOOGLE_SHEETS_WEBHOOK_TOKEN }
-          : {}),
-      },
-      body: JSON.stringify({
-        token: process.env.GOOGLE_SHEETS_WEBHOOK_TOKEN,
-        ...record,
-      }),
-      signal: controller.signal,
-      cache: "no-store",
-    });
+    let response: Response;
+    try {
+      response = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(record),
+        // Apps Script answers 302 to script.googleusercontent.com; the JSON we
+        // need is only on the final hop, so redirects must be followed.
+        redirect: "follow",
+        signal: controller.signal,
+        cache: "no-store",
+      });
+    } finally {
+      clearTimeout(timeout);
+    }
 
-    clearTimeout(timeout);
+    const bodyText = await response.text();
 
     if (!response.ok) {
-      console.error("[leads] Sheets webhook rejected the lead:", response.status, record);
+      console.error("[leads] Sheets webhook HTTP error:", response.status, redact(record));
       return NextResponse.json({ ok: false, error: "upstream" }, { status: 502 });
     }
+
+    // Apps Script has no way to set a status code — a rejected token, a missing
+    // sheet and a thrown exception all come back as HTTP 200. Trusting the
+    // status alone is what reported success while nothing reached the sheet, so
+    // the JSON body is the only thing that actually confirms the write.
+    let result: { success?: unknown; error?: unknown; row?: unknown };
+    try {
+      result = JSON.parse(bodyText);
+    } catch {
+      console.error(
+        "[leads] Sheets webhook returned a non-JSON body (first 200 chars):",
+        bodyText.slice(0, 200),
+        redact(record),
+      );
+      return NextResponse.json({ ok: false, error: "upstream" }, { status: 502 });
+    }
+
+    if (result.success !== true) {
+      // `error` is authored by our own Apps Script and never contains the token.
+      console.error("[leads] Sheets webhook declined the lead:", result.error, redact(record));
+      return NextResponse.json({ ok: false, error: "upstream" }, { status: 502 });
+    }
+
+    console.info("[leads] Lead written to the spreadsheet at row", result.row);
   } catch (error) {
-    console.error("[leads] Sheets webhook failed:", error, record);
+    console.error("[leads] Sheets webhook failed:", error, redact(record));
     return NextResponse.json({ ok: false, error: "upstream" }, { status: 502 });
   }
 
