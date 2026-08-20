@@ -110,76 +110,18 @@ export function LeadForm() {
     <section id="lead-form" className="bg-canvas py-20 sm:py-28 lg:py-32">
       <div className="j-shell">
         <div className="overflow-hidden rounded-jaleed-lg border border-hairline bg-white shadow-[var(--jaleed-shadow)]">
-          <div className="grid lg:grid-cols-[0.85fr_1.15fr]">
-            {/* ---------------- Brand panel ---------------- */}
-            <div className="on-dark relative isolate overflow-hidden bg-ink p-8 text-white sm:p-10 lg:p-12">
-              <div
-                aria-hidden
-                className="pointer-events-none absolute inset-0 z-0 opacity-45"
-                style={{
-                  background:
-                    "radial-gradient(120% 90% at 15% 0%, rgba(123,75,209,0.35), transparent 55%), radial-gradient(110% 80% at 90% 100%, rgba(14,156,151,0.28), transparent 55%)",
-                }}
-              />
-
-              <Reveal className="relative z-10">
-                <span className="j-kicker text-white/50">{t.form.eyebrow}</span>
-                <h2 className="j-display mt-4 text-[clamp(1.75rem,3.6vw,2.75rem)] text-white">
-                  {t.form.title}
-                </h2>
-                <p className="j-body mt-5 text-base text-white/70">{t.form.lede}</p>
-              </Reveal>
-
-              <Reveal delay={100} className="relative z-10">
-                <ul className="mt-8 space-y-3.5">
-                  {t.form.points.map((point) => (
-                    <li key={point} className="flex items-start gap-3 text-sm text-white/80">
-                      <IconCheck className="mt-0.5 size-4 shrink-0 text-white/45" />
-                      {point}
-                    </li>
-                  ))}
-                </ul>
-              </Reveal>
-
-              <Reveal delay={180} className="relative z-10">
-                <div className="mt-10 border-t border-white/12 pt-8">
-                  <p className="text-sm font-extrabold text-white">{t.form.asideTitle}</p>
-                  <p className="j-body mt-2 text-sm text-white/55">{t.form.asideBody}</p>
-
-                  <ul className="mt-6 space-y-2">
-                    <ContactRow
-                      href={`mailto:${CONTACT.email}`}
-                      icon={<IconMail className="size-[18px]" />}
-                      label={t.form.emailLabel}
-                      value={CONTACT.email}
-                      ltr
-                    />
-                    <ContactRow
-                      href={`tel:${CONTACT.phone}`}
-                      icon={<IconPhone className="size-[18px]" />}
-                      label={t.form.phoneLabel}
-                      value={CONTACT.phone}
-                      ltr
-                    />
-                    <ContactRow
-                      href={CONTACT.whatsapp}
-                      icon={<IconWhatsApp className="size-[18px]" />}
-                      label={t.form.whatsappLabel}
-                      value={CONTACT.phone}
-                      external
-                      ltr
-                    />
-                  </ul>
-                </div>
-              </Reveal>
-            </div>
-
+          <div className="grid lg:grid-cols-[1.15fr_0.85fr]">
             {/* ---------------- Form ---------------- */}
             <div className="p-6 sm:p-10 lg:p-12">
               {status === "success" ? (
                 <SuccessPanel t={t} onReset={reset} />
               ) : (
-                <form ref={formRef} onSubmit={onSubmit} noValidate className="flex h-full flex-col">
+                <form
+                  ref={formRef}
+                  onSubmit={onSubmit}
+                  noValidate
+                  className="flex h-full flex-col"
+                >
                   {status === "error" && (
                     <div
                       role="alert"
@@ -187,8 +129,12 @@ export function LeadForm() {
                     >
                       <IconAlert className="mt-0.5 size-5 shrink-0 text-raspberry" />
                       <div>
-                        <p className="text-sm font-extrabold text-ink">{t.form.error.title}</p>
-                        <p className="mt-1 text-sm text-muted">{t.form.error.body}</p>
+                        <p className="text-sm font-extrabold text-ink">
+                          {t.form.error.title}
+                        </p>
+                        <p className="mt-1 text-sm text-muted">
+                          {t.form.error.body}
+                        </p>
                       </div>
                     </div>
                   )}
@@ -196,7 +142,9 @@ export function LeadForm() {
                   {invalidFields.length > 0 && (
                     <p className="j-sr" role="status">
                       {t.form.errors.summary}:{" "}
-                      {invalidFields.map((name) => t.form.fields[name]).join(lang === "ar" ? "، " : ", ")}
+                      {invalidFields
+                        .map((name) => t.form.fields[name])
+                        .join(lang === "ar" ? "، " : ", ")}
                     </p>
                   )}
 
@@ -217,7 +165,11 @@ export function LeadForm() {
                       dirOverride="ltr"
                     />
                     <div className="sm:col-span-2">
-                      <Field {...fieldProps("company")} type="text" autoComplete="organization" />
+                      <Field
+                        {...fieldProps("company")}
+                        type="text"
+                        autoComplete="organization"
+                      />
                     </div>
                     <div className="sm:col-span-2">
                       <Field
@@ -265,10 +217,83 @@ export function LeadForm() {
                       )}
                     </button>
 
-                    <p className="j-body max-w-[22rem] text-xs text-muted">{t.form.privacy}</p>
+                    <p className="j-body max-w-[22rem] text-xs text-muted">
+                      {t.form.privacy}
+                    </p>
                   </div>
                 </form>
               )}
+            </div>
+            {/* ---------------- Brand panel ---------------- */}
+            <div className="on-dark relative isolate overflow-hidden bg-ink p-8 text-white sm:p-10 lg:p-12">
+              <div
+                aria-hidden
+                className="pointer-events-none absolute inset-0 z-0 opacity-45"
+                style={{
+                  background:
+                    "radial-gradient(120% 90% at 15% 0%, rgba(123,75,209,0.35), transparent 55%), radial-gradient(110% 80% at 90% 100%, rgba(14,156,151,0.28), transparent 55%)",
+                }}
+              />
+
+              <Reveal className="relative z-10">
+                <span className="j-kicker text-white/50">{t.form.eyebrow}</span>
+                <h2 className="j-display mt-4 text-[clamp(1.75rem,3.6vw,2.75rem)] text-white">
+                  {t.form.title}
+                </h2>
+                <p className="j-body mt-5 text-base text-white/70">
+                  {t.form.lede}
+                </p>
+              </Reveal>
+
+              <Reveal delay={100} className="relative z-10">
+                <ul className="mt-8 space-y-3.5">
+                  {t.form.points.map((point) => (
+                    <li
+                      key={point}
+                      className="flex items-start gap-3 text-sm text-white/80"
+                    >
+                      <IconCheck className="mt-0.5 size-4 shrink-0 text-white/45" />
+                      {point}
+                    </li>
+                  ))}
+                </ul>
+              </Reveal>
+
+              <Reveal delay={180} className="relative z-10">
+                <div className="mt-10 border-t border-white/12 pt-8">
+                  <p className="text-sm font-extrabold text-white">
+                    {t.form.asideTitle}
+                  </p>
+                  <p className="j-body mt-2 text-sm text-white/55">
+                    {t.form.asideBody}
+                  </p>
+
+                  <ul className="mt-6 space-y-2">
+                    <ContactRow
+                      href={`mailto:${CONTACT.email}`}
+                      icon={<IconMail className="size-[18px]" />}
+                      label={t.form.emailLabel}
+                      value={CONTACT.email}
+                      ltr
+                    />
+                    <ContactRow
+                      href={`tel:${CONTACT.phone}`}
+                      icon={<IconPhone className="size-[18px]" />}
+                      label={t.form.phoneLabel}
+                      value={CONTACT.phone}
+                      ltr
+                    />
+                    <ContactRow
+                      href={CONTACT.whatsapp}
+                      icon={<IconWhatsApp className="size-[18px]" />}
+                      label={t.form.whatsappLabel}
+                      value={CONTACT.phone}
+                      external
+                      ltr
+                    />
+                  </ul>
+                </div>
+              </Reveal>
             </div>
           </div>
         </div>
