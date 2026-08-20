@@ -11,9 +11,9 @@ export function AboutJaleed() {
   const { t, lang } = useLanguage();
 
   return (
-    <section id="about" className="relative bg-white py-20 sm:py-28 lg:py-32">
+    <section id="about" className="relative bg-white py-16 sm:py-20 lg:py-24">
       <div className="j-shell">
-        <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-20">
+        <div className="grid items-start gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-20">
           {/* ---- Copy ---- */}
           <div>
             <Reveal>
@@ -21,16 +21,16 @@ export function AboutJaleed() {
             </Reveal>
 
             <Reveal delay={80}>
-              <h2 className="j-display mt-4 text-[clamp(1.875rem,4.2vw,3.25rem)] text-ink">
+              <h2 className="j-display mt-4 text-[clamp(1.5rem,3vw,2.5rem)] text-ink">
                 {t.about.title}
               </h2>
             </Reveal>
 
-            <Reveal delay={150}>
+            {/* <Reveal delay={150}>
               <p className="j-body mt-6 max-w-[34rem] text-base text-muted sm:text-lg">
                 {t.about.body}
               </p>
-            </Reveal>
+            </Reveal> */}
 
             <Reveal delay={220}>
               <dl className="mt-10 grid grid-cols-2 gap-px overflow-hidden rounded-jaleed border border-hairline bg-hairline sm:grid-cols-4">
@@ -42,18 +42,25 @@ export function AboutJaleed() {
                     <dt className="text-sm leading-snug font-extrabold text-ink sm:text-[0.9375rem]">
                       {h.title}
                     </dt>
-                    <dd className="mt-2 text-xs leading-snug text-muted">{h.note}</dd>
+                    <dd className="mt-2 text-xs leading-snug text-muted">
+                      {h.note}
+                    </dd>
                   </div>
                 ))}
               </dl>
             </Reveal>
 
-            <Reveal delay={290}>
+            {/* <Reveal delay={290}>
               <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
-                <span className="j-kicker text-muted">{t.about.flavorsLabel}</span>
+                <span className="j-kicker text-muted">
+                  {t.about.flavorsLabel}
+                </span>
                 <ul className="flex flex-wrap items-center gap-x-5 gap-y-2">
                   {FLAVOR_KEYS.map((key) => (
-                    <li key={key} className="flex items-center gap-2 text-sm font-semibold text-ink">
+                    <li
+                      key={key}
+                      className="flex items-center gap-2 text-sm font-semibold text-ink"
+                    >
                       <span
                         aria-hidden
                         className="size-2.5 rounded-full"
@@ -64,18 +71,18 @@ export function AboutJaleed() {
                   ))}
                 </ul>
               </div>
-            </Reveal>
+            </Reveal> */}
           </div>
 
           {/* ---- Product plinth: black ground matches the official photography ---- */}
           <Reveal delay={140} className="relative">
             <div className="relative overflow-hidden rounded-jaleed-lg bg-black">
-              <div className="relative aspect-[4/5] w-full">
+              <div className="relative aspect-[5/3] w-full">
                 <Image
                   src="/brand/hero-cans-wall.jpg"
                   alt={t.about.imageAlt}
                   fill
-                  sizes="(max-width: 1024px) 92vw, 46vw"
+                  sizes="(max-width: 1024px) 92vw, 420px"
                   quality={82}
                   loading="lazy"
                   className="object-cover object-center"
@@ -98,7 +105,6 @@ export function AboutJaleed() {
                 </div>
               </div>
             </div>
-
           </Reveal>
         </div>
       </div>

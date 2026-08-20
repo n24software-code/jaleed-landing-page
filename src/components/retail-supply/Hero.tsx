@@ -11,7 +11,7 @@ export function Hero() {
   return (
     <section
       id="hero"
-      className="on-dark relative isolate flex min-h-[100svh] flex-col justify-end overflow-hidden bg-black text-white"
+      className="on-dark relative isolate flex min-h-[100svh] flex-col justify-center overflow-hidden bg-black text-white"
     >
       {/* Official Jaleed product photography, full-bleed. */}
       <div className="absolute inset-0 z-0">
@@ -42,7 +42,7 @@ export function Hero() {
         <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black/60 to-transparent" />
       </div>
 
-      <div className="j-shell relative z-10 w-full pt-28 pb-8 sm:pt-32 sm:pb-12">
+      <div className="j-shell relative z-10 w-full pt-20 pb-8 sm:pt-24 sm:pb-12">
         <div className="max-w-[46rem]">
           <Reveal>
             <span className="j-kicker inline-flex items-center gap-2.5 rounded-full border border-white/25 bg-white/10 px-4 py-2 text-white/90 backdrop-blur-md">
@@ -52,7 +52,7 @@ export function Hero() {
           </Reveal>
 
           <Reveal delay={90}>
-            <h1 className="j-display mt-5 text-[clamp(2.25rem,6.2vw,4.5rem)] text-white">
+            <h1 className="j-display mt-5 text-[clamp(2.25rem,6.2vw,3.5rem)] text-white">
               {t.hero.title}
             </h1>
           </Reveal>
@@ -64,7 +64,7 @@ export function Hero() {
           </Reveal>
 
           <Reveal delay={240}>
-            <p className="j-body mt-4 max-w-[36rem] text-[0.9375rem] text-white/70">
+            <p className="j-body mt-4 max-w-[50rem] text-[0.9rem] text-white/70">
               {t.hero.body}
             </p>
           </Reveal>
@@ -90,10 +90,16 @@ export function Hero() {
       </div>
 
       {/* Audience strip — states plainly who the page is for. */}
-      <Reveal delay={420} as="div" className="relative z-10 border-t border-white/15">
-        <div className="j-shell flex flex-col gap-3 py-5 sm:flex-row sm:items-center sm:gap-6">
-          <span className="j-kicker shrink-0 text-white/50">{t.audience.label}</span>
-          <ul className="j-scroll-x flex items-center gap-x-5 gap-y-2 overflow-x-auto text-sm font-semibold whitespace-nowrap text-white/85 sm:flex-wrap sm:whitespace-normal">
+      <Reveal
+        delay={420}
+        as="div"
+        className="relative z-10  opacity-0"
+      >
+        <div className="j-shell flex flex-col gap-3 py-5 sm:flex-row sm:items-center sm:gap-6 opacity-0">
+          <span className="j-kicker shrink-0 text-white/50">
+            {t.audience.label}
+          </span>
+          <ul className="j-scroll-x flex items-center gap-x-5 gap-y-2 overflow-x-auto text-sm font-semibold whitespace-nowrap text-white/85 sm:flex-wrap sm:whitespace-normal ">
             {t.audience.items.map((item) => (
               <li
                 key={item}

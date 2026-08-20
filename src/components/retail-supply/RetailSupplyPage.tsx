@@ -24,10 +24,10 @@ export function RetailSupplyPage({ lang }: { lang: Lang }) {
       <Header />
       <main id="main">
         <Hero />
-        <AboutJaleed />
+        {/* <AboutJaleed /> */}
         <Benefits />
-        <Products />
         <LeadForm />
+        <Products />
       </main>
       <Footer />
     </LanguageProvider>
